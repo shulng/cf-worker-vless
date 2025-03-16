@@ -295,6 +295,7 @@ function 给我小猫咪配置文件(hostName) {
     udp: false
     tls: ${TLS开关}
     network: ws
+    sni: ${hostName}
     servername: ${hostName}
     ws-opts:
       path: "/?ed=2560"
