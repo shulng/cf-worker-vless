@@ -86,13 +86,8 @@ async function 建立传输管道(WS接口, TCP接口, 写入初始数据) {
   const 传输数据 = TCP接口.writable.getWriter();
   const 数据流 = new ReadableStream({
     async start(控制器) {
-      if (写入初始数据) {
-        控制器.enqueue(写入初始数据);
-        写入初始数据 = null;
-      }
+      控制器.enqueue(写入初始数据);
       WS接口.addEventListener("message", (event) => 控制器.enqueue(event.data));
-      WS接口.addEventListener("close", () => 控制器.close());
-      WS接口.addEventListener("error", () => 控制器.close());
     },
   });
   数据流.pipeTo(
