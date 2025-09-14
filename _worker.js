@@ -4,9 +4,13 @@ let 反代IP = "ProxyIP.Vultr.CMLiussss.net";
 export default {
   async fetch(访问请求) {
     const 读取我的请求标头 = 访问请求.headers.get("Upgrade");
+    const url = new URL(访问请求.url);
     if (!读取我的请求标头 || 读取我的请求标头 !== "websocket") {
       return new Response(null, { status: 404 });
     } else if (读取我的请求标头 === "websocket") {
+      if (url.searchParams.has("proxyip")) {
+        反代IP = url.searchParams.get("proxyip");
+      }
       return 升级WS请求(访问请求);
     }
     return new Response(null, { status: 404 });
