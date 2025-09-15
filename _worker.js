@@ -11,24 +11,18 @@ export default {
       if (url.searchParams.has("proxyip")) {
         反代IP = url.searchParams.get("proxyip");
       }
-      return 升级WS请求(访问请求);
+      return 升级WS请求();
     }
     return new Response(null, { status: 404 });
   },
 };
-async function 升级WS请求(访问请求) {
+async function 升级WS请求() {
   const 创建WS接口 = new WebSocketPair();
   const [客户端, WS接口] = Object.values(创建WS接口);
-  const 读取我的加密访问内容数据头 = 访问请求.headers.get("sec-websocket-protocol");
-  const 解密数据 = 使用64位加解密(读取我的加密访问内容数据头);
-  解析VL标头(解密数据, WS接口);
+  WS接口.accept();
+  WS接口.send(new Uint8Array([0, 0]));
+  WS接口.addEventListener("message", (event) => 解析VL标头(event.data, WS接口));
   return new Response(null, { status: 101, webSocket: 客户端 });
-}
-function 使用64位加解密(还原混淆字符) {
-  还原混淆字符 = 还原混淆字符.replace(/-/g, "+").replace(/_/g, "/");
-  const 解密数据 = atob(还原混淆字符);
-  const 解密_你_个_丁咚_咙_咚呛 = Uint8Array.from(解密数据, (c) => c.charCodeAt(0));
-  return 解密_你_个_丁咚_咙_咚呛.buffer;
 }
 async function 解析VL标头(VL数据, WS接口, TCP接口) {
   if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
@@ -85,8 +79,6 @@ for (let i = 0; i < 256; ++i) {
   转换密钥格式.push((i + 256).toString(16).slice(1));
 }
 async function 建立传输管道(WS接口, TCP接口, 写入初始数据) {
-  WS接口.accept();
-  WS接口.send(new Uint8Array([0, 0]));
   const 传输数据 = TCP接口.writable.getWriter();
   const 数据流 = new ReadableStream({
     async start(控制器) {
