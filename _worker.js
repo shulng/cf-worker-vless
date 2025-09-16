@@ -19,7 +19,7 @@ async function 升级WS请求() {
   const [客户端, WS接口] = Object.values(创建WS接口);
   WS接口.accept();
   WS接口.send(new Uint8Array([0, 0]));
-  WS接口.addEventListener("message", (event) => 解析VL标头(event.data, WS接口));
+  WS接口.addEventListener("message", (event) => 解析VL标头(event.data, WS接口), { once: true });
   return new Response(null, { status: 101, webSocket: 客户端 });
 }
 async function 解析VL标头(VL数据, WS接口, TCP接口) {
