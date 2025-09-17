@@ -26,16 +26,15 @@ async function 启动传输管道(WS接口) {
   let TCP接口,
     首包数据 = false,
     首包处理完成 = null,
-    传输数据,
-    传输队列 = Promise.resolve();
+    传输数据;
   WS接口.addEventListener("message", async (event) => {
     if (!首包数据) {
       首包数据 = true;
       首包处理完成 = 解析VL标头(event.data);
-      传输队列 = 传输队列.then(() => 首包处理完成).catch();
+      await 首包处理完成;
     } else {
       await 首包处理完成;
-      传输队列 = 传输队列.then(async () => await 传输数据.write(event.data)).catch();
+      await 传输数据.write(event.data);
     }
   });
   async function 解析VL标头(VL数据) {
