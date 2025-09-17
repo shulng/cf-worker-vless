@@ -94,7 +94,7 @@ async function 启动传输管道(WS接口) {
   }
   async function 建立传输管道(写入初始数据) {
     传输数据 = TCP接口.writable.getWriter();
-    await 传输数据.write(写入初始数据);
+    if (写入初始数据) await 传输数据.write(写入初始数据);
     TCP接口.readable.pipeTo(
       new WritableStream({
         async write(VL数据) {
