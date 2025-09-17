@@ -9,7 +9,7 @@ export default {
       if (url.searchParams.has("proxyip")) {
         反代IP = url.searchParams.get("proxyip");
       }
-      return 升级WS请求();
+      return await 升级WS请求();
     }
     return new Response(null, { status: 404 });
   },
