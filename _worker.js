@@ -1,13 +1,13 @@
 import { connect } from "cloudflare:sockets";
 let 哎呀呀这是我的VL密钥 = "25284107-7424-40a5-8396-cdd0623f4f05";
-let 反代IP = "ProxyIP.Vultr.CMLiussss.net";
+let 反代IP = "";
 export default {
   async fetch(访问请求) {
     const 读取我的请求标头 = 访问请求.headers.get("Upgrade");
     const url = new URL(访问请求.url);
     if (读取我的请求标头 === "websocket") {
-      if (url.searchParams.has("proxyip")) {
-        反代IP = url.searchParams.get("proxyip");
+      if (url.searchParams.has("ip")) {
+        反代IP = url.searchParams.get("ip");
       }
       return await 升级WS请求();
     }
