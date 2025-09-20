@@ -81,7 +81,7 @@ async function 启动传输管道(WS接口) {
       const [反代IP地址, 反代IP端口 = 访问端口] = 反代IP.split(":");
       TCP接口 = connect({ hostname: 反代IP地址, port: 反代IP端口 });
     }
-    建立传输管道(写入初始数据);
+    await 建立传输管道(写入初始数据);
   }
   function 验证VL的密钥(arr, offset = 0) {
     const uuid = (转换密钥格式[arr[offset + 0]] + 转换密钥格式[arr[offset + 1]] + 转换密钥格式[arr[offset + 2]] + 转换密钥格式[arr[offset + 3]] + "-" + 转换密钥格式[arr[offset + 4]] + 转换密钥格式[arr[offset + 5]] + "-" + 转换密钥格式[arr[offset + 6]] + 转换密钥格式[arr[offset + 7]] + "-" + 转换密钥格式[arr[offset + 8]] + 转换密钥格式[arr[offset + 9]] + "-" + 转换密钥格式[arr[offset + 10]] + 转换密钥格式[arr[offset + 11]] + 转换密钥格式[arr[offset + 12]] + 转换密钥格式[arr[offset + 13]] + 转换密钥格式[arr[offset + 14]] + 转换密钥格式[arr[offset + 15]]).toLowerCase();
