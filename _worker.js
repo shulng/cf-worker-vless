@@ -27,7 +27,7 @@ async function 启动传输管道(WS接口) {
     首包数据 = false,
     首包处理完成 = null,
     传输数据;
-  WS接口.addEventListener("message", async (event) => {
+  WS接口.addEventListener("message", (event) => {
     if (!首包数据) {
       首包数据 = true;
       首包处理完成 = 解析VL标头(event.data);
