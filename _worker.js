@@ -9,7 +9,7 @@ export default {
       if (url.searchParams.has("ip")) {
         反代IP = url.searchParams.get("ip");
       }
-      return await 升级WS请求();
+      return 升级WS请求();
     }
     return new Response(null, { status: 404 });
   },
@@ -31,10 +31,10 @@ async function 启动传输管道(WS接口) {
     if (!首包数据) {
       首包数据 = true;
       首包处理完成 = 解析VL标头(event.data);
-      await 首包处理完成;
+      首包处理完成;
     } else {
-      await 首包处理完成;
-      await 传输数据.write(event.data);
+      首包处理完成;
+      传输数据.write(event.data);
     }
   });
   async function 解析VL标头(VL数据) {
@@ -93,7 +93,7 @@ async function 启动传输管道(WS接口) {
   }
   async function 建立传输管道(写入初始数据) {
     传输数据 = TCP接口.writable.getWriter();
-    if (写入初始数据) await 传输数据.write(写入初始数据);
+    if (写入初始数据) 传输数据.write(写入初始数据);
     TCP接口.readable.pipeTo(
       new WritableStream({
         async write(VL数据) {
