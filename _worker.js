@@ -9,7 +9,7 @@ export default {
       if (url.searchParams.has("ip")) {
         反代IP = url.searchParams.get("ip");
       }
-      return await 升级WS请求();
+      return 升级WS请求();
     }
     return new Response(null, { status: 404 });
   },
@@ -19,7 +19,7 @@ async function 升级WS请求() {
   const [客户端, WS接口] = Object.values(创建WS接口);
   WS接口.accept();
   WS接口.send(new Uint8Array([0, 0]));
-  await 启动传输管道(WS接口);
+  启动传输管道(WS接口);
   return new Response(null, { status: 101, webSocket: 客户端 });
 }
 async function 启动传输管道(WS接口) {
@@ -31,10 +31,10 @@ async function 启动传输管道(WS接口) {
     if (!首包数据) {
       首包数据 = true;
       首包处理完成 = 解析VL标头(event.data);
-      await 首包处理完成;
+      首包处理完成;
     } else {
-      await 首包处理完成;
-      await 传输数据.write(event.data);
+      首包处理完成;
+      传输数据.write(event.data);
     }
   });
   async function 解析VL标头(VL数据) {
@@ -81,7 +81,7 @@ async function 启动传输管道(WS接口) {
       const [反代IP地址, 反代IP端口 = 访问端口] = 反代IP.split(":");
       TCP接口 = connect({ hostname: 反代IP地址, port: 反代IP端口 });
     }
-    await 建立传输管道(写入初始数据);
+    建立传输管道(写入初始数据);
   }
   function 验证VL的密钥(arr, offset = 0) {
     const uuid = (转换密钥格式[arr[offset + 0]] + 转换密钥格式[arr[offset + 1]] + 转换密钥格式[arr[offset + 2]] + 转换密钥格式[arr[offset + 3]] + "-" + 转换密钥格式[arr[offset + 4]] + 转换密钥格式[arr[offset + 5]] + "-" + 转换密钥格式[arr[offset + 6]] + 转换密钥格式[arr[offset + 7]] + "-" + 转换密钥格式[arr[offset + 8]] + 转换密钥格式[arr[offset + 9]] + "-" + 转换密钥格式[arr[offset + 10]] + 转换密钥格式[arr[offset + 11]] + 转换密钥格式[arr[offset + 12]] + 转换密钥格式[arr[offset + 13]] + 转换密钥格式[arr[offset + 14]] + 转换密钥格式[arr[offset + 15]]).toLowerCase();
@@ -93,7 +93,7 @@ async function 启动传输管道(WS接口) {
   }
   async function 建立传输管道(写入初始数据) {
     传输数据 = TCP接口.writable.getWriter();
-    if (写入初始数据) await 传输数据.write(写入初始数据);
+    if (写入初始数据) 传输数据.write(写入初始数据);
     TCP接口.readable.pipeTo(
       new WritableStream({
         async write(VL数据) {
