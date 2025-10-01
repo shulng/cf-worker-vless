@@ -18,7 +18,6 @@ async function 升级WS请求() {
   const 创建WS接口 = new WebSocketPair();
   const [客户端, WS接口] = Object.values(创建WS接口);
   WS接口.accept();
-  WS接口.send(new Uint8Array([1, 0]));
   await 启动传输管道(WS接口);
   return new Response(null, { status: 101, webSocket: 客户端 });
 }
@@ -41,7 +40,9 @@ async function 启动传输管道(WS接口) {
     if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
       return new Response(null, { status: 400 });
     }
-    const 获取数据定位 = new Uint8Array(VL数据)[17];
+    const 二进制数据 = new Uint8Array(VL数据);
+    const 获取协议头 = 二进制数据[0];
+    const 获取数据定位 = 二进制数据[17];
     const 提取端口索引 = 18 + 获取数据定位 + 1;
     const 建立端口缓存 = VL数据.slice(提取端口索引, 提取端口索引 + 2);
     const 访问端口 = new DataView(建立端口缓存).getUint16(0);
@@ -81,6 +82,7 @@ async function 启动传输管道(WS接口) {
       const [反代IP地址, 反代IP端口 = 访问端口] = 反代IP.split(":");
       TCP接口 = connect({ hostname: 反代IP地址, port: 反代IP端口 });
     }
+    WS接口.send(new Uint8Array([获取协议头, 0]));
     建立传输管道(写入初始数据);
   }
   function 验证VL的密钥(arr, offset = 0) {
