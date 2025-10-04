@@ -25,17 +25,17 @@ async function 升级WS请求() {
 async function 启动传输管道(WS接口) {
   let TCP接口,
     首包数据 = false,
-    首包处理完成 = null,
+    首包处理 = Promise.resolve(),
     传输数据;
   WS接口.addEventListener("message", async (event) => {
-    if (!首包数据) {
-      首包数据 = true;
-      首包处理完成 = 解析VL标头(event.data);
-      await 首包处理完成;
-    } else {
-      await 首包处理完成;
-      await 传输数据.write(event.data);
-    }
+    首包处理 = 首包处理.then(async () => {
+      if (!首包数据) {
+        首包数据 = true;
+        await 解析VL标头(event.data);
+      } else {
+        await 传输数据.write(event.data);
+      }
+    });
   });
   async function 解析VL标头(VL数据) {
     if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
