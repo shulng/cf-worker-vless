@@ -14,6 +14,7 @@ export default {
     return new Response(null);
   },
 };
+
 async function 升级WS请求() {
   const 创建WS接口 = new WebSocketPair();
   const [客户端, WS接口] = Object.values(创建WS接口);
@@ -22,11 +23,13 @@ async function 升级WS请求() {
   启动传输管道(WS接口);
   return new Response(null, { status: 101, webSocket: 客户端 });
 }
+
 async function 启动传输管道(WS接口) {
   let TCP接口,
     首包数据 = false,
     首包处理 = Promise.resolve(),
     传输数据;
+
   WS接口.addEventListener("message", async (event) => {
     首包处理 = 首包处理.then(async () => {
       if (!首包数据) {
@@ -37,12 +40,14 @@ async function 启动传输管道(WS接口) {
       }
     });
   });
+
   async function 解析VL标头(VL数据) {
     if (
       验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥
     ) {
       return new Response(null);
     }
+
     const 获取数据定位 = new Uint8Array(VL数据)[17];
     const 提取端口索引 = 18 + 获取数据定位 + 1;
     const 建立端口缓存 = VL数据.slice(提取端口索引, 提取端口索引 + 2);
@@ -55,6 +60,7 @@ async function 启动传输管道(WS接口) {
     let 地址长度 = 0;
     let 访问地址 = "";
     let 地址信息索引 = 提取地址索引 + 1;
+
     switch (识别地址类型) {
       case 1:
         地址长度 = 4;
@@ -85,6 +91,7 @@ async function 启动传输管道(WS接口) {
       default:
         return new Response(null);
     }
+
     const 写入初始数据 = VL数据.slice(地址信息索引 + 地址长度);
     try {
       TCP接口 = connect({ hostname: 访问地址, port: 访问端口 });
@@ -95,6 +102,7 @@ async function 启动传输管道(WS接口) {
     }
     建立传输管道(写入初始数据);
   }
+
   function 验证VL的密钥(arr, offset = 0) {
     const uuid = (
       转换密钥格式[arr[offset + 0]] +
@@ -120,10 +128,12 @@ async function 启动传输管道(WS接口) {
     ).toLowerCase();
     return uuid;
   }
+
   const 转换密钥格式 = [];
   for (let i = 0; i < 256; ++i) {
     转换密钥格式.push((i + 256).toString(16).slice(1));
   }
+
   async function 建立传输管道(写入初始数据) {
     传输数据 = TCP接口.writable.getWriter();
     if (写入初始数据) await 传输数据.write(写入初始数据);
