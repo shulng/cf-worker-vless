@@ -57,8 +57,8 @@ async function 启动传输管道(WS接口) {
       VL数据.slice(提取地址索引, 提取地址索引 + 1),
     );
     const 识别地址类型 = 建立地址缓存[0];
-    let 地址长度 = 0;
-    let 访问地址 = "";
+    let 地址长度;
+    let 访问地址;
     let 地址信息索引 = 提取地址索引 + 1;
 
     switch (识别地址类型) {
@@ -77,7 +77,7 @@ async function 启动传输管道(WS接口) {
           VL数据.slice(地址信息索引, 地址信息索引 + 地址长度),
         );
         break;
-      case 3:
+      case 3: {
         地址长度 = 16;
         const dataView = new DataView(
           VL数据.slice(地址信息索引, 地址信息索引 + 地址长度),
@@ -88,6 +88,7 @@ async function 启动传输管道(WS接口) {
         }
         访问地址 = ipv6.join(":");
         break;
+      }
       default:
         return new Response(null);
     }
