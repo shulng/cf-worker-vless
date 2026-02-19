@@ -26,14 +26,14 @@ async function 升级WS请求() {
 
 async function 启动传输管道(WS接口) {
   let TCP接口,
-    首包数据 = false,
+    首包数据 = true,
     首包处理 = Promise.resolve(),
     传输数据;
 
   WS接口.addEventListener("message", async (event) => {
     首包处理 = 首包处理.then(async () => {
-      if (!首包数据) {
-        首包数据 = true;
+      if (首包数据) {
+        首包数据 = false;
         await 解析VL标头(event.data);
       } else {
         await 传输数据.write(event.data);
