@@ -45,7 +45,7 @@ async function 启动传输管道(WS接口) {
     if (
       验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥
     ) {
-      return new Response(null);
+      return;
     }
 
     const 获取数据定位 = new Uint8Array(VL数据)[17];
@@ -89,7 +89,7 @@ async function 启动传输管道(WS接口) {
         访问地址 = ipv6.join(":");
         break;
       default:
-        return new Response(null);
+        return;
     }
 
     const 写入初始数据 = VL数据.slice(地址信息索引 + 地址长度);
