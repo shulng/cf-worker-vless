@@ -29,7 +29,6 @@ async function 启动传输管道(WS接口) {
   let 首包数据 = true;
   let 首包处理 = Promise.resolve();
   let 传输数据;
-  let 读取数据;
 
   WS接口.addEventListener("message", async (event) => {
     首包处理 = 首包处理.then(async () => {
@@ -105,6 +104,10 @@ async function 启动传输管道(WS接口) {
   }
 
   function 验证VL的密钥(arr, offset = 0) {
+    const 转换密钥格式 = [];
+    for (let i = 0; i < 256; ++i) {
+      转换密钥格式.push((i + 256).toString(16).slice(1));
+    }
     const uuid = (
       转换密钥格式[arr[offset + 0]] +
       转换密钥格式[arr[offset + 1]] +
@@ -130,19 +133,15 @@ async function 启动传输管道(WS接口) {
     return uuid;
   }
 
-  const 转换密钥格式 = [];
-  for (let i = 0; i < 256; ++i) {
-    转换密钥格式.push((i + 256).toString(16).slice(1));
-  }
-
   async function 建立传输管道(写入初始数据) {
     传输数据 = TCP接口.writable.getWriter();
-    读取数据 = TCP接口.readable.getReader();
     if (写入初始数据) await 传输数据.write(写入初始数据);
-    while (true) {
-      const { value, done } = await 读取数据.read();
-      if (done) break;
-      WS接口.send(value);
-    }
+    await TCP接口.readable.pipeTo(
+      new WritableStream({
+        async write(VL数据) {
+          WS接口.send(VL数据);
+        },
+      }),
+    );
   }
 }
