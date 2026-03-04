@@ -37,6 +37,7 @@ async function 启动传输管道(WS接口) {
         await 解析VL标头(event.data);
       });
     } else {
+      await 首包处理;
       await 传输数据.write(event.data);
     }
   });
