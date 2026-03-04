@@ -31,14 +31,14 @@ async function 启动传输管道(WS接口) {
   let 传输数据;
 
   WS接口.addEventListener("message", async (event) => {
-    首包处理 = 首包处理.then(async () => {
-      if (首包数据) {
-        首包数据 = false;
+    if (首包数据) {
+      首包数据 = false;
+      首包处理 = 首包处理.then(async () => {
         await 解析VL标头(event.data);
-      } else {
-        await 传输数据.write(event.data);
-      }
-    });
+      });
+    } else {
+      await 传输数据.write(event.data);
+    }
   });
 
   async function 解析VL标头(VL数据) {
