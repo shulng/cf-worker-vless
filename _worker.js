@@ -1,4 +1,5 @@
 import { connect } from 'cloudflare:sockets';
+const 转换密钥格式 = Array.from({length: 256}, (_, i) => (i + 256).toString(16).slice(1));
 let 哎呀呀这是我的VL密钥 = '25284107-7424-40a5-8396-cdd0623f4f05';
 let 反代IP = '';
 export default {
@@ -96,10 +97,7 @@ async function 启动传输管道(WS接口) {
 		}
 		建立传输管道(写入初始数据);
 	}
-	const 转换密钥格式 = [];
-	for (let i = 0; i < 256; ++i) {
-		转换密钥格式.push((i + 256).toString(16).slice(1));
-	}
+
 	function 验证VL的密钥(arr, offset = 0) {
 		const uuid = (
 			转换密钥格式[arr[offset + 0]] +
