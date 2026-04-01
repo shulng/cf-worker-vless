@@ -19,6 +19,7 @@ async function 升级WS请求() {
 	const 创建WS接口 = new WebSocketPair();
 	const [客户端, WS接口] = Object.values(创建WS接口);
 	WS接口.accept();
+	WS接口.binaryType = "arraybuffer";
 	WS接口.send(new Uint8Array([0, 0]));
 	启动传输管道(WS接口);
 	return new Response(null, { status: 101, webSocket: 客户端 });
