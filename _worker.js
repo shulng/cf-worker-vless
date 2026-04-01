@@ -1,9 +1,7 @@
 import { connect } from 'cloudflare:sockets';
-
 const 转换密钥格式 = Array.from({ length: 256 }, (_, i) => (i + 256).toString(16).slice(1));
 let 哎呀呀这是我的VL密钥 = '25284107-7424-40a5-8396-cdd0623f4f05';
 let 反代IP = '';
-
 export default {
 	async fetch(访问请求) {
 		const 读取我的请求标头 = 访问请求.headers.get('Upgrade');
@@ -17,7 +15,6 @@ export default {
 		return new Response(null);
 	},
 };
-
 async function 升级WS请求() {
 	const 创建WS接口 = new WebSocketPair();
 	const [客户端, WS接口] = Object.values(创建WS接口);
@@ -26,24 +23,20 @@ async function 升级WS请求() {
 	启动传输管道(WS接口);
 	return new Response(null, { status: 101, webSocket: 客户端 });
 }
-
 class MessageQueue {
 	constructor() {
 		this.queue = Promise.resolve();
 	}
-
 	enqueue(fn) {
 		this.queue = this.queue.then(fn);
 		return this.queue;
 	}
 }
-
 async function 启动传输管道(WS接口) {
 	let TCP接口;
 	let 首包数据 = true;
 	let 传输数据;
 	const msgQueue = new MessageQueue();
-
 	WS接口.addEventListener('message', (event) => {
 		msgQueue.enqueue(async () => {
 			if (首包数据) {
@@ -54,11 +47,9 @@ async function 启动传输管道(WS接口) {
 			}
 		});
 	});
-
 	WS接口.addEventListener('close', () => {
 		WS接口.close();
 	});
-
 	async function 解析VL标头(VL数据) {
 		if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
 			return;
@@ -105,12 +96,10 @@ async function 启动传输管道(WS接口) {
 		}
 		建立传输管道(写入初始数据);
 	}
-
 	function 验证VL的密钥(arr, offset = 0) {
 		const uuid = (转换密钥格式[arr[offset + 0]] + 转换密钥格式[arr[offset + 1]] + 转换密钥格式[arr[offset + 2]] + 转换密钥格式[arr[offset + 3]] + '-' + 转换密钥格式[arr[offset + 4]] + 转换密钥格式[arr[offset + 5]] + '-' + 转换密钥格式[arr[offset + 6]] + 转换密钥格式[arr[offset + 7]] + '-' + 转换密钥格式[arr[offset + 8]] + 转换密钥格式[arr[offset + 9]] + '-' + 转换密钥格式[arr[offset + 10]] + 转换密钥格式[arr[offset + 11]] + 转换密钥格式[arr[offset + 12]] + 转换密钥格式[arr[offset + 13]] + 转换密钥格式[arr[offset + 14]] + 转换密钥格式[arr[offset + 15]]).toLowerCase();
 		return uuid;
 	}
-
 	async function 建立传输管道(写入初始数据) {
 		传输数据 = TCP接口.writable.getWriter();
 		if (写入初始数据) await 传输数据.write(写入初始数据);
