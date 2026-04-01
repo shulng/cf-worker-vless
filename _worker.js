@@ -55,6 +55,10 @@ async function 启动传输管道(WS接口) {
 		});
 	});
 
+	WS接口.addEventListener('close', () => {
+		WS接口.close();
+	});
+
 	async function 解析VL标头(VL数据) {
 		if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
 			return;
