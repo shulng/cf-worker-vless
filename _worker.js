@@ -16,10 +16,9 @@ export default {
 	},
 };
 async function 升级WS请求() {
-	const 创建WS接口 = new WebSocketPair();
-	const [客户端, WS接口] = Object.values(创建WS接口);
+	const [客户端, WS接口] = Object.values(new WebSocketPair());
 	WS接口.accept();
-	WS接口.binaryType = "arraybuffer";
+	WS接口.binaryType = 'arraybuffer';
 	WS接口.send(new Uint8Array([0, 0]));
 	启动传输管道(WS接口);
 	return new Response(null, { status: 101, webSocket: 客户端 });
@@ -47,9 +46,6 @@ async function 启动传输管道(WS接口) {
 				await 传输数据.write(event.data);
 			}
 		});
-	});
-	WS接口.addEventListener('close', () => {
-		WS接口.close();
 	});
 	async function 解析VL标头(VL数据) {
 		if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
@@ -103,7 +99,9 @@ async function 启动传输管道(WS接口) {
 	}
 	async function 建立传输管道(写入初始数据) {
 		传输数据 = TCP接口.writable.getWriter();
-		if (写入初始数据) await 传输数据.write(写入初始数据);
+		if (写入初始数据) {
+			await 传输数据.write(写入初始数据);
+		}
 		await TCP接口.readable.pipeTo(
 			new WritableStream({
 				async write(chunk) {
