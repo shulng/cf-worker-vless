@@ -42,7 +42,7 @@ async function 启动传输管道(WS接口) {
 	let 首包数据 = true;
 	let 传输数据;
 	const msgQueue = new MessageQueue();
-	
+
 	WS接口.addEventListener('message', (event) => {
 		msgQueue.enqueue(async () => {
 			if (首包数据) {
@@ -53,7 +53,7 @@ async function 启动传输管道(WS接口) {
 			}
 		});
 	});
-	
+
 	async function 解析VL标头(VL数据) {
 		if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
 			return;
@@ -100,12 +100,12 @@ async function 启动传输管道(WS接口) {
 		}
 		建立传输管道(写入初始数据);
 	}
-	
+
 	function 验证VL的密钥(arr, offset = 0) {
 		const uuid = (转换密钥格式[arr[offset + 0]] + 转换密钥格式[arr[offset + 1]] + 转换密钥格式[arr[offset + 2]] + 转换密钥格式[arr[offset + 3]] + '-' + 转换密钥格式[arr[offset + 4]] + 转换密钥格式[arr[offset + 5]] + '-' + 转换密钥格式[arr[offset + 6]] + 转换密钥格式[arr[offset + 7]] + '-' + 转换密钥格式[arr[offset + 8]] + 转换密钥格式[arr[offset + 9]] + '-' + 转换密钥格式[arr[offset + 10]] + 转换密钥格式[arr[offset + 11]] + 转换密钥格式[arr[offset + 12]] + 转换密钥格式[arr[offset + 13]] + 转换密钥格式[arr[offset + 14]] + 转换密钥格式[arr[offset + 15]]).toLowerCase();
 		return uuid;
 	}
-	
+
 	async function 建立传输管道(写入初始数据) {
 		传输数据 = TCP接口.writable.getWriter();
 		if (写入初始数据) {
