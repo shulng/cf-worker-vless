@@ -27,24 +27,14 @@ function 升级WS请求() {
 	return new Response(null, { status: 101, webSocket: 客户端 });
 }
 
-class MessageQueue {
-	constructor() {
-		this.queue = Promise.resolve();
-	}
-	enqueue(fn) {
-		this.queue = this.queue.then(fn);
-		return this.queue;
-	}
-}
-
 async function 启动传输管道(WS接口) {
 	let TCP接口;
 	let 首包数据 = true;
+	let 处理队列 = Promise.resolve();
 	let 传输数据;
-	const msgQueue = new MessageQueue();
 
 	WS接口.addEventListener('message', (event) => {
-		msgQueue.enqueue(async () => {
+		处理队列 = 处理队列.then(async () => {
 			if (首包数据) {
 				首包数据 = false;
 				await 解析VL标头(event.data);
