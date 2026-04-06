@@ -111,7 +111,7 @@ async function 启动传输管道(WS接口) {
 		if (写入初始数据) {
 			await 传输数据.write(写入初始数据);
 		}
-		await TCP接口.readable.pipeTo(
+		TCP接口.readable.pipeTo(
 			new WritableStream({
 				write(chunk) {
 					WS接口.send(chunk);
