@@ -12,13 +12,13 @@ export default {
 			if (url.searchParams.has('ip')) {
 				反代IP = url.searchParams.get('ip');
 			}
-			return 升级WS请求();
+			return await 升级WS请求();
 		}
 		return new Response(null);
 	},
 };
 
-function 升级WS请求() {
+async function 升级WS请求() {
 	const [客户端, WS接口] = Object.values(new WebSocketPair());
 	WS接口.accept();
 	WS接口.binaryType = 'arraybuffer';
@@ -101,7 +101,7 @@ async function 启动传输管道(WS接口) {
 		if (写入初始数据) {
 			await 传输数据.write(写入初始数据);
 		}
-		TCP接口.readable.pipeTo(
+		await TCP接口.readable.pipeTo(
 			new WritableStream({
 				write(chunk) {
 					WS接口.send(chunk);
