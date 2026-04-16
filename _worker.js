@@ -14,7 +14,7 @@ export default {
 			}
 			return await 升级WS请求();
 		}
-		return new Response(null);
+		return new Response('Not found', { status: 404 });
 	},
 };
 
