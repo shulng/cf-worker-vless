@@ -1,8 +1,5 @@
 import { connect } from 'cloudflare:sockets';
 
-const 转换密钥格式 = Array.from({ length: 256 }, (_, i) => (i + 256).toString(16).slice(1));
-let 哎呀呀这是我的VL密钥 = '25284107-7424-40a5-8396-cdd0623f4f05';
-
 export default {
 	async fetch(访问请求) {
 		const 读取我的请求标头 = 访问请求.headers.get('Upgrade');
@@ -42,9 +39,6 @@ async function 启动传输管道(WS接口, 反代IP) {
 	});
 
 	async function 解析VL标头(VL数据) {
-		if (验证VL的密钥(new Uint8Array(VL数据.slice(1, 17))) !== 哎呀呀这是我的VL密钥) {
-			return;
-		}
 		const 获取数据定位 = new Uint8Array(VL数据)[17];
 		const 提取端口索引 = 18 + 获取数据定位 + 1;
 		const 建立端口缓存 = VL数据.slice(提取端口索引, 提取端口索引 + 2);
@@ -87,11 +81,6 @@ async function 启动传输管道(WS接口, 反代IP) {
 			await TCP接口.opened;
 		}
 		建立传输管道(写入初始数据);
-	}
-
-	function 验证VL的密钥(arr, offset = 0) {
-		const uuid = (转换密钥格式[arr[offset + 0]] + 转换密钥格式[arr[offset + 1]] + 转换密钥格式[arr[offset + 2]] + 转换密钥格式[arr[offset + 3]] + '-' + 转换密钥格式[arr[offset + 4]] + 转换密钥格式[arr[offset + 5]] + '-' + 转换密钥格式[arr[offset + 6]] + 转换密钥格式[arr[offset + 7]] + '-' + 转换密钥格式[arr[offset + 8]] + 转换密钥格式[arr[offset + 9]] + '-' + 转换密钥格式[arr[offset + 10]] + 转换密钥格式[arr[offset + 11]] + 转换密钥格式[arr[offset + 12]] + 转换密钥格式[arr[offset + 13]] + 转换密钥格式[arr[offset + 14]] + 转换密钥格式[arr[offset + 15]]).toLowerCase();
-		return uuid;
 	}
 
 	async function 建立传输管道(写入初始数据) {
