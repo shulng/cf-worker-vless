@@ -23,17 +23,15 @@ async function 升级WS请求(反代IP) {
 
 async function 启动传输管道(WS接口, 反代IP) {
 	let TCP接口;
-	let 首包数据 = true;
 	let 处理队列 = Promise.resolve();
 	let 传输数据;
 
 	WS接口.addEventListener('message', (event) => {
 		处理队列 = 处理队列.then(async () => {
-			if (首包数据) {
-				首包数据 = false;
-				await 解析VL标头(event.data);
-			} else {
+			if (传输数据) {
 				await 传输数据.write(event.data);
+			} else {
+				await 解析VL标头(event.data);
 			}
 		});
 	});
