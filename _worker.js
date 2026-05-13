@@ -25,27 +25,30 @@ async function 启动传输管道(WS接口, 反代IP) {
 	let TCP接口;
 	let 传输数据;
 
-	const 消息流 = new ReadableStream({
+	const stream = new ReadableStream({
 		start(controller) {
 			WS接口.addEventListener('message', (event) => {
-				controller.enqueue(event.data);
+				const message = event.data;
+				controller.enqueue(message);
 			});
+
 			WS接口.addEventListener('close', () => {
 				controller.close();
 			});
+
 			WS接口.addEventListener('error', (error) => {
 				controller.error(error);
 			});
 		},
 	});
 
-	消息流.pipeTo(
+	stream.pipeTo(
 		new WritableStream({
-			async write(数据) {
+			async write(chunk, controller) {
 				if (传输数据) {
-					await 传输数据.write(数据);
+					await 传输数据.write(chunk);
 				} else {
-					await 解析VL标头(数据);
+					await 解析VL标头(chunk);
 				}
 			},
 		}),
