@@ -44,7 +44,7 @@ async function 启动传输管道(WS接口, 反代IP) {
 
 	stream.pipeTo(
 		new WritableStream({
-			async write(chunk, controller) {
+			async write(chunk) {
 				if (传输数据) {
 					await 传输数据.write(chunk);
 				} else {
