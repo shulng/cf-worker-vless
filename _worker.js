@@ -23,18 +23,33 @@ async function 升级WS请求(反代IP) {
 
 async function 启动传输管道(WS接口, 反代IP) {
 	let TCP接口;
-	let 处理队列 = Promise.resolve();
 	let 传输数据;
 
-	WS接口.addEventListener('message', (event) => {
-		处理队列 = 处理队列.then(async () => {
-			if (传输数据) {
-				await 传输数据.write(event.data);
-			} else {
-				await 解析VL标头(event.data);
-			}
-		});
+	const 消息流 = new ReadableStream({
+		start(controller) {
+			WS接口.addEventListener('message', (event) => {
+				controller.enqueue(event.data);
+			});
+			WS接口.addEventListener('close', () => {
+				controller.close();
+			});
+			WS接口.addEventListener('error', (error) => {
+				controller.error(error);
+			});
+		},
 	});
+
+	消息流.pipeTo(
+		new WritableStream({
+			async write(数据) {
+				if (传输数据) {
+					await 传输数据.write(数据);
+				} else {
+					await 解析VL标头(数据);
+				}
+			},
+		}),
+	);
 
 	async function 解析VL标头(VL数据) {
 		const 获取数据定位 = new Uint8Array(VL数据)[17];
