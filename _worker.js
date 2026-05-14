@@ -104,6 +104,7 @@ async function 启动传输管道(WS接口, 反代IP) {
 
 		if (写入初始数据?.byteLength > 0) {
 			await 传输数据.write(写入初始数据);
+			写入初始数据 = null;
 		}
 
 		TCP接口.readable.pipeTo(
