@@ -28,8 +28,7 @@ async function 启动传输管道(WS接口, 反代IP) {
 	const stream = new ReadableStream({
 		start(controller) {
 			WS接口.addEventListener('message', (event) => {
-				const message = event.data;
-				controller.enqueue(message);
+				controller.enqueue(event.data);
 			});
 
 			WS接口.addEventListener('close', () => {
