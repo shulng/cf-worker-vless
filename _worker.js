@@ -41,7 +41,7 @@ async function 启动传输管道(WS接口, 反代IP) {
 		},
 	});
 
-	stream.pipeTo(
+	await stream.pipeTo(
 		new WritableStream({
 			async write(chunk) {
 				if (传输数据) {
@@ -106,7 +106,7 @@ async function 启动传输管道(WS接口, 反代IP) {
 			写入初始数据 = null;
 		}
 
-		TCP接口.readable.pipeTo(
+		await TCP接口.readable.pipeTo(
 			new WritableStream({
 				write(chunk) {
 					WS接口.send(chunk);
