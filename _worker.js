@@ -30,14 +30,6 @@ async function 启动传输管道(WS接口, 反代IP) {
 			WS接口.addEventListener('message', (event) => {
 				controller.enqueue(event.data);
 			});
-
-			WS接口.addEventListener('close', () => {
-				controller.close();
-			});
-
-			WS接口.addEventListener('error', (error) => {
-				controller.error(error);
-			});
 		},
 	});
 
@@ -108,7 +100,7 @@ async function 启动传输管道(WS接口, 反代IP) {
 
 		await TCP接口.readable.pipeTo(
 			new WritableStream({
-				write(chunk) {
+				async write(chunk) {
 					WS接口.send(chunk);
 				},
 			}),
