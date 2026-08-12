@@ -42,17 +42,24 @@ async function 启动传输管道(WS接口, 反代IP) {
           if (!result) return;
           传输数据 = result.传输数据;
 
-          result.TCP接口.readable.pipeTo(
-            new WritableStream({
-              write(chunk) {
-                WS接口.send(chunk);
-              },
-            }),
-          );
+          启动数据回传(result.TCP接口, WS接口);
         }
       },
     }),
   );
+}
+
+async function 启动数据回传(TCP接口, WS接口) {
+  const reader = TCP接口.readable.getReader();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      WS接口.send(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
 }
 
 async function 解析VL标头(VL数据, 反代IP) {
