@@ -104,12 +104,14 @@ async function 解析VL标头(VL数据, 反代IP) {
 
   const 写入初始数据 = VL数据.slice(地址信息索引 + 地址长度);
 
+  if (isBlockedAddress(访问地址)) return;
   let TCP接口;
   try {
     TCP接口 = connect({ hostname: 访问地址, port: 访问端口 });
     await TCP接口.opened;
   } catch {
     const [反代IP地址, 反代IP端口 = 访问端口] = 反代IP.split(":");
+    if (isBlockedAddress(反代IP地址)) return;
     TCP接口 = connect({ hostname: 反代IP地址, port: Number(反代IP端口) || 访问端口 });
     await TCP接口.opened;
   }
@@ -121,4 +123,8 @@ async function 解析VL标头(VL数据, 反代IP) {
   }
 
   return { TCP接口, 传输数据 };
+}
+
+function isBlockedAddress(host) {
+  return /^(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|169\.254\.|0\.0\.0\.0|::1$|fc00:|fd[0-9a-f]{2}:)/i.test(host);
 }
