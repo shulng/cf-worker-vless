@@ -16,7 +16,6 @@ async function 升级WS请求(反代IP) {
   const [客户端, WS接口] = Object.values(new WebSocketPair());
   WS接口.accept();
   WS接口.binaryType = "arraybuffer";
-  WS接口.send(new Uint8Array([0, 0]));
   启动传输管道(WS接口, 反代IP);
   return new Response(null, { status: 101, webSocket: 客户端 });
 }
@@ -41,7 +40,7 @@ async function 启动传输管道(WS接口, 反代IP) {
           const result = await 解析VL标头(chunk, 反代IP);
           if (!result) return;
           传输数据 = result.传输数据;
-
+          WS接口.send(new Uint8Array([result.版本号, 0]));
           启动数据回传(result.TCP接口, WS接口);
         }
       },
@@ -63,6 +62,7 @@ async function 启动数据回传(TCP接口, WS接口) {
 }
 
 async function 解析VL标头(VL数据, 反代IP) {
+  const 版本号 = new Uint8Array(VL数据)[0];
   const 获取数据定位 = new Uint8Array(VL数据)[17];
   const 提取端口索引 = 18 + 获取数据定位 + 1;
   const 建立端口缓存 = VL数据.slice(提取端口索引, 提取端口索引 + 2);
@@ -120,5 +120,5 @@ async function 解析VL标头(VL数据, 反代IP) {
     await 传输数据.write(写入初始数据);
   }
 
-  return { TCP接口, 传输数据 };
+  return { TCP接口, 传输数据, 版本号 };
 }
