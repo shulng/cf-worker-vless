@@ -107,7 +107,7 @@ async function 解析VL标头(VL数据, 反代IP) {
     TCP接口 = connect({ hostname: 访问地址, port: 访问端口 });
     await TCP接口.opened;
   } catch {
-    const [反代IP地址, 反代IP端口 = 访问端口] = 反代IP.split(":");
+    const [反代IP地址, 反代IP端口] = 反代IP.split(":");
     TCP接口 = connect({ hostname: 反代IP地址, port: Number(反代IP端口) || 访问端口 });
     await TCP接口.opened;
   }
