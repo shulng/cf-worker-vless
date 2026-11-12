@@ -22,28 +22,21 @@ async function 升级WS请求(反代IP) {
 
 async function 启动传输管道(WS接口, 反代IP) {
   let 传输数据;
+  let 队列 = Promise.resolve();
 
-  await new ReadableStream({
-    start(controller) {
-      WS接口.addEventListener("message", (event) => {
-        controller.enqueue(event.data);
-      });
-    },
-  }).pipeTo(
-    new WritableStream({
-      async write(chunk) {
-        if (!传输数据) {
-          const result = await 解析VL标头(chunk, 反代IP);
-          if (!result) return;
-          传输数据 = result.传输数据;
-          WS接口.send(new Uint8Array([result.版本号, 0]));
-          启动数据回传(result.TCP接口, WS接口);
-        } else {
-          await 传输数据.write(chunk);
-        }
-      },
-    }),
-  );
+  WS接口.addEventListener("message", (event) => {
+    队列 = 队列.then(async () => {
+      if (!传输数据) {
+        const result = await 解析VL标头(event.data, 反代IP);
+        if (!result) return;
+        传输数据 = result.传输数据;
+        WS接口.send(new Uint8Array([result.版本号, 0]));
+        启动数据回传(result.TCP接口, WS接口);
+      } else {
+        await 传输数据.write(event.data);
+      }
+    });
+  });
 }
 
 async function 启动数据回传(TCP接口, WS接口) {
